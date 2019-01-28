@@ -1,0 +1,33 @@
+{
+  "name": "caf_users",
+  "description": "Cloud Assistants lib for managing users",
+  "version": "0.3.1",
+  "author": "Antonio Lain <antlai@cafjs.com>",
+  "dependencies": {
+      "caf_components" : "^0.3.0",
+      "caf_redis" : "^0.3.0",
+      "caf_transport" : "^0.3.0"
+  },
+  "devDependencies": {
+        "eslint": "^3.1.1",
+        "nodeunit" : ">=0.9",
+        "caf_core" : "^0.3.0",
+        "typescript": "2.8.X",
+        "@types/node": "^9.4.0",
+        "jsdoc": "^3.4.2"
+  },
+  "main": "index",
+  "homepage": "http://www.cafjs.com",
+  "repository": {
+        "type": "git",
+        "url": "https://github.com/cafjs/caf_users.git"
+  },
+  "scripts": {
+        "test": "node ./node_modules/.bin/nodeunit",
+        "eslint" : "./node_modules/.bin/eslint .",
+        "eslintfix" : "./node_modules/.bin/eslint --fix .",
+        "docs" : "rm -fr docs; mkdir -p docs; ./node_modules/.bin/jsdoc --pedantic -c ./conf.json -d docs lib/*.js --readme ./README.md --package ./package.json",
+        "checktype" : "./node_modules/.bin/tsc"
+  },
+  "engines": { "node": ">= 8.0.0" }
+}
