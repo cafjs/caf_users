@@ -16,8 +16,8 @@ var setTimeoutAsync = util.promisify(setTimeout);
 
 var USERS = ['john', 'alice', 'bob'];
 var APPS = ['john-play1', 'alice-play2'];
-var CAS = ['john-play1-bob-x1', 'alice-play2-bob-x2',
-           'john-play1-alice-x1', 'alice-play2-alice-x2'];
+var CAS = ['john-play1#bob-x1', 'alice-play2#bob-x2',
+           'john-play1#alice-x1', 'alice-play2#alice-x2'];
 
 var appName = 'foo-test' + myUtils.uniqueId();
 
@@ -37,7 +37,7 @@ module.exports = {
 
     helloworld: async function (test) {
         var self = this;
-        test.expect(17);
+        test.expect(19);
         try {
             await this.$._.$.users.init(USERS, APPS);
             var listAll = await this.$._.$.users.listAll();
@@ -58,14 +58,14 @@ module.exports = {
             test.ok(describeAll[1].users.bob === "1");
 
             // Does not create new ones if not expired
-            await this.$._.$.users.registerCAs(['john-play1-bob-x1']);
+            await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
             test.ok(describeAll[1].users.john === "2.66");
             test.ok(describeAll[1].users.bob === "1");
 
             // empty bob account
-            await this.$._.$.users.registerCAs(['john-play1-bob-x2']);
+            await this.$._.$.users.registerCAs(['john-play1#bob-x2']);
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
             test.ok(describeAll[1].users.john === "2.99");
@@ -74,11 +74,16 @@ module.exports = {
 
             // but it does when it expires
             await setTimeoutAsync(16000);
-            res = await this.$._.$.users.registerCAs(['john-play1-bob-x1']);
+            res = await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
             console.log(JSON.stringify(res));
             test.ok(res[0]); // not enough units
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
+
+            //check that it expired
+            res = await this.$._.$.users.checkCA('john-play1#bob-x1');
+            console.log(JSON.stringify(res));
+            test.ok(res[1] < 0); // not enough units
 
             // let's add units
             await this.$._.$.users.changeUnits('23233', 'bob', 1.0);
@@ -87,12 +92,17 @@ module.exports = {
             test.ok(describeAll[1].users.bob === "1");
 
             // let's try again with enough units
-            res = await this.$._.$.users.registerCAs(['john-play1-bob-x1']);
+            res = await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
             console.log(JSON.stringify(res));
             test.ok(!res[0]); // not enough units
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
             test.ok(describeAll[1].users.bob === "0");
+
+            //check that it is now ok
+            res = await this.$._.$.users.checkCA('john-play1#bob-x1');
+            console.log(JSON.stringify(res));
+            test.ok(res[1] > 0); // not enough units
 
             // getUserInfo
             res = await this.$._.$.users.getUserInfo('alice');

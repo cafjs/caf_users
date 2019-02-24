@@ -59,6 +59,15 @@ exports.newInstance = async function($, spec) {
             }
         };
 
+        that.checkCA = async function(ca) {
+            try {
+                var result = await $._.$[cp].checkCA(ca);
+                return [null, result];
+            } catch (err) {
+                return [err];
+            }
+        };
+
         that.changeUnits = async function(nonce, user, delta) {
             try {
                 var result;
