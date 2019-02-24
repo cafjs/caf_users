@@ -25,7 +25,7 @@
             "description" : "redisPlug Users",
             "env" : {
                 "defaultUnits" : 3,
-                "defaultTimePerUnit" : 15,
+                "defaultTimePerUnit" : 0.000173611,
                 "appWriterFraction" : 0.33,
                 "appPublishCost" :1,
                 "appName" : "$._.env.appName",

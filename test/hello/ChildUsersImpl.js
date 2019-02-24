@@ -47,7 +47,7 @@ exports.newInstance = async function($, spec) {
             try {
                 var all = await Promise.all(cas.map(async function(ca) {
                     var p = await $._.$[cp].registerCA(ca);
-                    console.log('Registed: ' + ca + ' Result:' +
+                    console.log('Registered: ' + ca + ' Result:' +
                                 JSON.stringify(p)) ;
                 }));
                 cas.forEach((ca) => {state.cas[ca] = true;});
