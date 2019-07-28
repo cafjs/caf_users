@@ -15,6 +15,7 @@ process.on('uncaughtException', function (err) {
 var setTimeoutAsync = util.promisify(setTimeout);
 
 var USERS = ['john', 'alice', 'bob'];
+var USERS2 = ['john2', 'alice2', 'bob2'];
 var APPS = ['john-play1', 'alice-play2'];
 var CAS = ['john-play1#bob-x1', 'alice-play2#bob-x2',
            'john-play1#alice-x1', 'alice-play2#alice-x2'];
@@ -114,5 +115,91 @@ module.exports = {
             test.ifError(err);
             test.done();
         }
+
+    },
+
+    transfers: async function (test) {
+        test.expect(40);
+        try {
+            await this.$._.$.users.init(USERS2, []);
+
+            // transfer OK
+            var res = await this.$._.$.users.transferOK('john2', 'alice2', 1);
+            test.ok(!res[0]);
+            res = res[1];
+            console.log(JSON.stringify(res));
+            test.ok(res.id);
+            test.ok(res.t[9] === 'true'); // released
+            test.ok(res.userFrom[1].user === 2); // escrow
+            test.ok(res.userFrom2[1].user === 2); // final
+            test.ok(res.userTo[1].user === 3); // before
+            test.ok(res.userTo2[1].user === 4); // final
+
+            test.ok(res.userFrom2[1].reputation.completed === 1);
+            test.ok(res.userTo2[1].reputation.completed === 1);
+
+            test.ok(Object.keys(res.userFrom[1].offers).length === 1);
+            test.ok(Object.keys(res.userFrom2[1].offers).length === 0);
+            test.ok(Object.keys(res.userTo[1].accepts).length === 1);
+            test.ok(Object.keys(res.userTo2[1].accepts).length === 0);
+
+            // transfer disputed
+            res = await this.$._.$.users.transferDisputed('john2', 'alice2', 1);
+            test.ok(!res[0]);
+            res = res[1];
+            console.log(JSON.stringify(res));
+            test.ok(res.t[9] === 'false'); // released
+            test.ok(res.userFrom[1].user === 1); // escrow
+            test.ok(res.userFrom2[1].user === 2); // final
+            test.ok(res.userTo[1].user === 4); // before
+            test.ok(res.userTo2[1].user === 4); // final
+
+            test.ok(res.userFrom2[1].reputation.disputed === 1);
+            test.ok(res.userTo2[1].reputation.disputed === 1);
+
+            test.ok(Object.keys(res.userFrom[1].offers).length === 1);
+            test.ok(Object.keys(res.userFrom2[1].offers).length === 0);
+            test.ok(Object.keys(res.userTo[1].accepts).length === 1);
+            test.ok(Object.keys(res.userTo2[1].accepts).length === 0);
+
+
+            // transfer disputed after release
+            res = await this.$._.$.users.transferDisputedAfterRelease('john2',
+                                                                      'alice2',
+                                                                      1);
+            test.ok(res[0]);
+
+            // transfer expired
+            res = await this.$._.$.users.transferExpired('john2',
+                                                         'alice2',
+                                                         1);
+            test.ok(!res[0]);
+            res = res[1];
+            console.log(JSON.stringify(res));
+            test.ok(res.t[9] === 'false'); // released
+            test.ok(res.userFrom[1].user === 1); // escrow
+            test.ok(res.userFrom2[1].user === 2); // final
+            test.ok(res.userTo[1].user === 4); // before
+            test.ok(res.userTo2[1].user === 4); // final
+
+            test.ok(res.userFrom2[1].reputation.disputed === 1);
+            test.ok(res.userTo2[1].reputation.disputed === 1);
+
+            // "disputed after release" added one to expired
+            test.ok(res.userFrom2[1].reputation.expired === 2);
+            test.ok(res.userTo2[1].reputation.expired === 2);
+
+            test.ok(Object.keys(res.userFrom[1].offers).length === 1);
+            test.ok(Object.keys(res.userFrom2[1].offers).length === 0);
+            test.ok(Object.keys(res.userTo[1].accepts).length === 1);
+            test.ok(Object.keys(res.userTo2[1].accepts).length === 0);
+
+            test.done();
+        } catch (err) {
+            test.ifError(err);
+            test.done();
+        }
     }
+
+
 };

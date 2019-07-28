@@ -1,8 +1,10 @@
 var caf_comp = require('caf_components');
+var myUtils = caf_comp.myUtils;
 
 var genComponent =  caf_comp.gen_component;
+var util = require('util');
 
-
+var setTimeoutPromise = util.promisify(setTimeout);
 /**
  * Factory method to create a test component.
  *
@@ -84,6 +86,91 @@ exports.newInstance = async function($, spec) {
 
         that.getUserInfo = async function(user) {
             return $._.$[cp].getUserInfo(user);
+        };
+
+
+        that.transferOK = async function(from, to, units) {
+            try {
+                var id = 'transferUnits_' + myUtils.uniqueId();
+                await $._.$[cp].transferUnits(id, from, to,  units, id);
+                await $._.$[cp].releaseTransfer(from, id);
+                var t = await $._.$[cp].describeTransfer(id);
+                console.log(t);
+                var userFrom = await $._.$[cp].getUserInfo(from);
+                var userTo = await $._.$[cp].getUserInfo(to);
+                await $._.$[cp].acceptTransfer(from, to,  units, id);
+                var userFrom2 = await $._.$[cp].getUserInfo(from);
+                var userTo2 = await $._.$[cp].getUserInfo(to);
+                return [null, {id: id, t: t, userFrom: userFrom,
+                               userFrom2: userFrom2, userTo: userTo,
+                               userTo2: userTo2}];
+            } catch (err) {
+                console.log(myUtils.errToPrettyStr(err));
+                return [err];
+            }
+        };
+
+        that.transferDisputed = async function(from, to, units) {
+            try {
+                var id = 'transferUnits_' + myUtils.uniqueId();
+                await $._.$[cp].transferUnits(id, from, to,  units, id);
+                var t = await $._.$[cp].describeTransfer(id);
+                var userFrom = await $._.$[cp].getUserInfo(from);
+                var userTo = await $._.$[cp].getUserInfo(to);
+                await $._.$[cp].disputeTransfer(from, to,  units, id);
+                var userFrom2 = await $._.$[cp].getUserInfo(from);
+                var userTo2 = await $._.$[cp].getUserInfo(to);
+                return [null, {id: id, t: t, userFrom: userFrom,
+                               userFrom2: userFrom2, userTo: userTo,
+                               userTo2: userTo2}];
+            } catch (err) {
+                console.log(myUtils.errToPrettyStr(err));
+                return [err];
+            }
+        };
+
+        that.transferDisputedAfterRelease = async function(from, to, units) {
+            var id = 'transferUnits_' + myUtils.uniqueId();
+            try {
+                await $._.$[cp].transferUnits(id, from, to,  units, id);
+                await $._.$[cp].releaseTransfer(from, id);
+                var t = await $._.$[cp].describeTransfer(id);
+                var userFrom = await $._.$[cp].getUserInfo(from);
+                var userTo = await $._.$[cp].getUserInfo(to);
+                await $._.$[cp].disputeTransfer(from, to,  units, id);
+                var userFrom2 = await $._.$[cp].getUserInfo(from);
+                var userTo2 = await $._.$[cp].getUserInfo(to);
+                return [null, {id: id, t: t, userFrom: userFrom,
+                               userFrom2: userFrom2, userTo: userTo,
+                               userTo2: userTo2}];
+            } catch (err) {
+                console.log(myUtils.errToPrettyStr(err));
+                await setTimeoutPromise(6000);
+                // recover the disputed unit
+                await $._.$[cp].expireTransfer(from, to, units, id);
+                return [err];
+            }
+        };
+
+        that.transferExpired =  async function(from, to, units) {
+            try {
+                var id = 'transferUnits_' + myUtils.uniqueId();
+                await $._.$[cp].transferUnits(id, from, to,  units, id);
+                // await $._.$[cp].releaseTransfer(from, id);
+                var t = await $._.$[cp].describeTransfer(id);
+                var userFrom = await $._.$[cp].getUserInfo(from);
+                var userTo = await $._.$[cp].getUserInfo(to);
+                await setTimeoutPromise(6000);
+                await $._.$[cp].expireTransfer(from, to, units, id);
+                var userFrom2 = await $._.$[cp].getUserInfo(from);
+                var userTo2 = await $._.$[cp].getUserInfo(to);
+                return [null, {id: id, t: t, userFrom: userFrom,
+                               userFrom2: userFrom2, userTo: userTo,
+                               userTo2: userTo2}];
+            } catch (err) {
+                console.log(myUtils.errToPrettyStr(err));
+                return [err];
+            }
         };
 
         that.describeAll = async function() {
