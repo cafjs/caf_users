@@ -12,7 +12,7 @@ var setTimeoutPromise = util.promisify(setTimeout);
  */
 exports.newInstance = async function($, spec) {
     try {
-        var that = genComponent.constructor($, spec);
+        var that = genComponent.create($, spec);
         var uuid = Math.floor(Math.random() *1000000);
         var state = {uuid: uuid};
         var cp = 'cp';
