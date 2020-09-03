@@ -25,6 +25,7 @@
             "description" : "redisPlug Users",
             "env" : {
                 "defaultUnits" : 3,
+                "reloadUsersIntervalInSec": 1,
                 "defaultTimePerUnit" : 0.000173611,
                 "defaultHoldTimeInSec" : 5,
                 "appWriterFraction" : 0.33,

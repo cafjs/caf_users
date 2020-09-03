@@ -45,6 +45,15 @@ exports.newInstance = async function($, spec) {
             return [];
         };
 
+        that.computeAppUsage = async function() {
+            await $._.$[cp].computeAppUsage();
+            return [];
+        };
+
+        that.getAppUsage = function(apps) {
+            return apps.map(x => $._.$[cp].getAppUsage(x));
+        };
+
         that.registerCAs = async function(cas) {
             try {
                 var all = await Promise.all(cas.map(async function(ca) {

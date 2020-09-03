@@ -38,7 +38,7 @@ module.exports = {
 
     helloworld: async function (test) {
         var self = this;
-        test.expect(19);
+        test.expect(23);
         try {
             await this.$._.$.users.init(USERS, APPS);
             var listAll = await this.$._.$.users.listAll();
@@ -57,6 +57,20 @@ module.exports = {
             test.ok(describeAll[1].users.john === "2.66");
             test.ok(describeAll[1].users.alice === "0.66");
             test.ok(describeAll[1].users.bob === "1");
+
+            // trigger user stats
+            await this.$._.$.users.computeAppUsage();
+            const allApps = this.$._.$.users.getAppUsage(APPS);
+            console.log(allApps);
+            test.ok(allApps[0][0].count === 2);
+            test.ok(allApps[1][0].count === 2);
+
+            // Show that appends to user stats
+            await this.$._.$.users.computeAppUsage();
+            const allApps2 = this.$._.$.users.getAppUsage(APPS);
+            console.log(allApps2);
+            test.ok(allApps2[0][1].count === 2);
+            test.ok(allApps2[1][1].count === 2);
 
             // Does not create new ones if not expired
             await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
