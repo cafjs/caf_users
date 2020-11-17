@@ -31,6 +31,7 @@
                 "defaultHoldTimeInSec" : 5,
                 "appWriterFraction" : 0.33,
                 "appPublishCost" :1,
+                "appRegisterCost" :10,
                 "appName" : "$._.env.appName",
                 "paas" : "redis",
                 "redis" : {

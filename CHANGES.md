@@ -8,6 +8,7 @@ The  copyright of the original `CAF` project is assigned to `Hewlett-Packard Dev
  - Add unregisterApp method
  - Add unregisterCA method
  - Add order confirmation
+ - Add app registration subscription costs
 
 ## 0.4.1
  - Track apps usage
