@@ -54,8 +54,8 @@ module.exports = {
             console.log(JSON.stringify(res));
             var describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
-            test.ok(describeAll[1].users.john === "2.66");
-            test.ok(describeAll[1].users.alice === "0.66");
+            test.ok(describeAll[1].users.john === "3.398");
+            test.ok(describeAll[1].users.alice === "1.398");
             test.ok(describeAll[1].users.bob === "1");
 
             // trigger user stats
@@ -76,14 +76,14 @@ module.exports = {
             await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
-            test.ok(describeAll[1].users.john === "2.66");
+            test.ok(describeAll[1].users.john === "3.398");
             test.ok(describeAll[1].users.bob === "1");
 
             // empty bob account
             await this.$._.$.users.registerCAs(['john-play1#bob-x2']);
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
-            test.ok(describeAll[1].users.john === "2.99");
+            test.ok(describeAll[1].users.john === "4.097");
             test.ok(describeAll[1].users.bob === "0");
 
 
@@ -109,7 +109,7 @@ module.exports = {
             // let's try again with enough units
             res = await this.$._.$.users.registerCAs(['john-play1#bob-x1']);
             console.log(JSON.stringify(res));
-            test.ok(!res[0]); // not enough units
+            test.ok(!res[0]); // enough units
             describeAll = await this.$._.$.users.describeAll();
             console.log(JSON.stringify(describeAll[1]));
             test.ok(describeAll[1].users.bob === "0");
@@ -117,13 +117,13 @@ module.exports = {
             //check that it is now ok
             res = await this.$._.$.users.checkCA('john-play1#bob-x1');
             console.log(JSON.stringify(res));
-            test.ok(res[1] > 0); // not enough units
+            test.ok(res[1] > 0);
 
             // getUserInfo
             res = await this.$._.$.users.getUserInfo('alice');
-            console.log(res);
+            console.log('ALICE: ' + JSON.stringify(res));
             test.ok(!res[0]);
-            test.ok(res[1].user === 0.66);
+            test.ok(res[1].user === 1.398);
             test.done();
         } catch (err) {
             test.ifError(err);

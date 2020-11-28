@@ -38,7 +38,8 @@ exports.newInstance = async function($, spec) {
             await Promise.all(users.map(async (user) =>  await $._.$[cp]
                                         .registerUser(user)));
             await Promise.all(apps.map(async (app) =>  await $._.$[cp]
-                                       .registerApp(app)));
+                                       .registerApp(app, 'bronce', 0.699,
+                                                    0.000173611)));
             state.users = users;
             state.apps = apps;
             state.cas = {};
@@ -153,7 +154,8 @@ exports.newInstance = async function($, spec) {
                                userFrom2: userFrom2, userTo: userTo,
                                userTo2: userTo2}];
             } catch (err) {
-                console.log(myUtils.errToPrettyStr(err));
+                console.log('DisputedAfterRelease' +
+                            myUtils.errToPrettyStr(err));
                 await setTimeoutPromise(6000);
                 // recover the disputed unit
                 await $._.$[cp].expireTransfer(from, to, units, id);

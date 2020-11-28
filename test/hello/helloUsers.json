@@ -27,7 +27,7 @@
                 "accountsApp" : "root-accounts",
                 "defaultUnits" : 3,
                 "reloadUsersIntervalInSec": 1,
-                "defaultTimePerUnit" : 0.000173611,
+                "defaultTimePerUnit" : 10,
                 "defaultHoldTimeInSec" : 5,
                 "appWriterFraction" : 0.33,
                 "appPublishCost" :1,
