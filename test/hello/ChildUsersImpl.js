@@ -38,7 +38,7 @@ exports.newInstance = async function($, spec) {
             await Promise.all(users.map(async (user) =>  await $._.$[cp]
                                         .registerUser(user)));
             await Promise.all(apps.map(async (app) =>  await $._.$[cp]
-                                       .registerApp(app, 'bronce', 0.699,
+                                       .registerApp(app, 'bronze', 0.699,
                                                     0.000173611)));
             state.users = users;
             state.apps = apps;
