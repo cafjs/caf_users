@@ -6,7 +6,7 @@ See https://www.cafjs.com
 
 ## Library for User Management
 
-[![Build Status](https://travis-ci.org/cafjs/caf_users.svg?branch=master)](https://travis-ci.org/cafjs/caf_users)
+[![Build Status](https://github.com/cafjs/caf_users/actions/workflows/push.yml/badge.svg)](https://github.com/cafjs/caf_users/actions/workflows/push.yml)
 
 This repository contains a `Caf.js` library to manage user profiles.
 
